@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "accuknox"
+version = "0.1.0"
+description = ""
+authors = ["harish <dev.harish@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+psycopg2-binary = "^2.9.9"
+django = "^5.1.1"
+djangorestframework = "^3.15.2"
+djangorestframework-simplejwt = "^5.3.1"
+dj-rest-auth = "^6.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
