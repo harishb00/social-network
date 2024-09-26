@@ -20,6 +20,8 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         )
         if is_blocked:
             raise serializers.ValidationError(f"{receiver.username} has blocked you.")
+        if sender == receiver:
+            raise serializers.ValidationError("sender and receiver can't be same.")
 
         return data
 
