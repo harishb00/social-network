@@ -9,7 +9,7 @@ UserModel = get_user_model()
 class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
-        fields = ["id", "status", "sender", "receiver"]
+        fields = ["id", "status", "sender", "receiver", "created_at"]
 
     def validate(self, data):
         sender = data["sender"]
@@ -27,6 +27,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["sender"] = instance.sender.name
         representation["receiver"] = instance.receiver.name
+        representation.pop("created_at")
         return representation
 
 

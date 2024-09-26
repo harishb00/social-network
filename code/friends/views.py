@@ -12,6 +12,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from friends.throttles import FriendRequestThrottle
 
@@ -102,10 +104,11 @@ class Request(APIView):
 class RequestListView(ListAPIView):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
-
     serializer_class = FriendRequestSerializer
     pagination_class = RequestPagination
+    filter_backends = [OrderingFilter, DjangoFilterBackend]
     ordering_fields = ["created_at"]
+    ordering = ["created_at"]
 
     def get_queryset(self):
         return get_pending_requests(self.request.user)
