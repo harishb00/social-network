@@ -39,7 +39,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = UserModel.objects.create(
             username=validated_data["username"],
-            # TODO: check by signing up with ALL CAPS CASE
             email=validated_data["email"].lower(),
             name=validated_data["name"],
         )

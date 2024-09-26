@@ -1,14 +1,5 @@
 version: "3.8"
 services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    command: >
-      bash -c "ls -l
-      && poetry run python manage.py runserver 0.0.0.0:8000"
-    volumes: # automatically syncs docker fs with local fs
-      - .:/code
   db:
     image: postgres:13
     ports:
@@ -17,6 +8,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
+
+  web:
+    build: .
+    command: sh /app/start.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
 
 volumes:
   postgres_data:

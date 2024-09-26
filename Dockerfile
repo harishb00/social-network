@@ -25,6 +25,9 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies
 RUN poetry install --no-dev
 
+COPY start.sh ./
+RUN chmod +x ./start.sh
+
 # Copy the application code
 COPY ./code .
 

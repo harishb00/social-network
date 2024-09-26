@@ -100,3 +100,6 @@ GitHub.sublime-settings
 # Visual Studio Code
 .vscode/
 .history
+
+# Ruff
+.ruff_cache/

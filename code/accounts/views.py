@@ -61,10 +61,13 @@ class UserListView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = PageNumberPagination
 
-    # TODO: Remove users who blocked the requestor
     # TODO: implement full text search for email
 
-    queryset = UserModel.objects.all()
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["name", "email"]
+
+    def get_queryset(self):
+        user = self.request.user
+        blocked_users = user.blocked.all()
+        return UserModel.objects.exclude(blocker__id__in=blocked_users)

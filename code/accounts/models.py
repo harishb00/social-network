@@ -17,10 +17,10 @@ class CustomUser(AbstractUser):
         unique=True,
     )
 
-    # name of the field on the user model that is used as the unique identifier.
-    USERNAME_FIELD = "email"
-    # list of the field names that will be prompted for when creating a user via the createsuperuser management command.
-    REQUIRED_FIELDS = ["username"]
+    USERNAME_FIELD = "email"  # name of the field on the user model that is used as the unique identifier.
+    REQUIRED_FIELDS = [
+        "username"
+    ]  # list of field names that will be prompted when creating a user via the createsuperuser management command.
 
     def save(self, *args, **kwargs):
         if self.email:

@@ -61,7 +61,6 @@ class Request(APIView):
 
         # check if there's already a request sent by same user to the same profile
         # TODO: check if receiver already sent a friend request to the sender
-        # TODO: make sure the sender is not blocked by receiver
         fr = FriendRequest.objects.filter(sender=sender, receiver=receiver)
         if not fr:
             serializer = FriendRequestSerializer(

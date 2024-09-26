@@ -7,18 +7,9 @@ UserModel = get_user_model()
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    sender_name = serializers.SerializerMethodField()
-    receiver_name = serializers.SerializerMethodField()
-
     class Meta:
         model = FriendRequest
-        fields = "__all__"
-
-    def get_sender_name(self, obj):
-        return obj.sender.name
-
-    def get_receiver_name(self, obj):
-        return obj.receiver.name
+        fields = ["id", "status", "sender", "receiver"]
 
     def validate(self, data):
         sender = data["sender"]
@@ -31,6 +22,12 @@ class FriendRequestSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"{receiver.username} has blocked you.")
 
         return data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["sender"] = instance.sender.name
+        representation["receiver"] = instance.receiver.name
+        return representation
 
 
 class FriendDetailSerializer(serializers.ModelSerializer):
