@@ -4,6 +4,7 @@ API for a social networking application using Django Rest Framework.
 ## Table of Contents
 - [Installation](#installation)
 - [API Documentation](#api-documentation)
+- [Features](#features)
 - [Design Choices](#design-choices)
 - [Next Steps](#next-steps)
 - [References](#references)
@@ -298,12 +299,25 @@ A Postman collection is exported and available as `Social API.postman_collection
     }
     ```
 
+## Features
+* JWT based Authentication with refreshable tokens.
+* Sign up with email.
+* Login and Logout.
+* Search users by name or email.
+* Send friend requests to users.
+* Accept/Reject friend requests.
+* Block/Unblock an user.
+* Rejected requests can be resent after a cool down period of 24 hours.
+* List all the friends of logged in user.
+* List all the pending friend requests sent to the user logged in (with sorting).
+* Only authorized resources can be modified by logged in users.
+* Pending requests and User search endpoints are paginated with 10 items per page.
+* User rate throttling is used to limit the rate of friend requests sent in a minute.
 
 ## Design Choices
-* Throttling is used to limit number of friend requests a user can send in a minute. It's configured as **3 requests per minute**.
-* Pagination is used for viewing pending friend requests and searching users to reduce the load and improve faster response times. This helps search requests which results in huge number of results.
 * Redis cache is used to cache response of getting friends list API endpoint. This is to ensure performance by returning cached results. The cache is invalidated when a new friend is added to account.
-
+* Pagination is used for viewing pending friend requests and searching users to reduce the load and improve faster response times. This helps search requests which results in huge number of results.
+* Throttling is used to limit number of friend requests a user can send in a minute. It's configured as **3 requests per minute**.
 
 ## Next Steps
 * Add swagger documentation for APIs.
