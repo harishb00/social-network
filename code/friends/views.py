@@ -200,7 +200,9 @@ def block(request: Request, user_id: int):
     )
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            {"message": "User blocked successfully."}, status=status.HTTP_201_CREATED
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -233,4 +235,7 @@ class UnBlock(APIView):
 
         self.check_object_permissions(request, blocked_record)
         blocked_record.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "User unblocked successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

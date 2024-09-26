@@ -29,8 +29,10 @@ docker-compose up --build
     - Built-in dependency resolver
     - Automatically creates and manages virtual environment
 
-## API Documentation
+## Examples
+A Postman collection is exported and available as `Social API.postman_collection.json` in the repo. Download and import it to try out examples.
 
+## API Documentation
 
 ### Authentication [`/api/v1/auth`]
 
@@ -170,12 +172,13 @@ docker-compose up --build
   - **Description:** Retrieve a list of friends.
   - **Response:**
     ```json
-    [
-      {
-        "id": 1,
-        "username": "user1"
-      },
-    ]
+      [
+          {
+              "user_id": 2,
+              "username": "bharish",
+              "name": "Harish B"
+          }
+      ]
     ```
 
 - **List Pending Requests**

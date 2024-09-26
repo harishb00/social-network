@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "9e90c88e-9e37-4465-b06c-6c413a63e45f",
+		"name": "Social API",
+		"description": "## 🔖 **How to use this collection**\n\nAfter signing up using the `Sign Up` endpoint in `Auth` folder, login using your credentials using the `Login` endpoint. Copy the access token returned and paste it in the `Authorization` header of the collection by choosing `Auth Type` as `Bearer Token`. All the example files will inherit the token from here.\n\n#### **Auth**\n\n- Sign Up\n    \n- Login\n    \n- Refresh Token\n    \n- Logout\n    \n\n#### **User**\n\n- List Users\n    \n- Search Users\n    \n\n#### **Friend Management**\n\n- Send/Accept Friend Request\n    \n- Reject Friend Request\n    \n- List Friends\n    \n- Block/Unblock user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38496222"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"mali\",\r\n    \"email\": \"mali@email.com\",\r\n    \"password\": \"user1234\",\r\n    \"password2\": \"user1234\",\r\n    \"name\": \"Mir\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/signup/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"rsurya@email.com\",\r\n    \"password\": \"user1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/login/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTYzNjc1MiwiaWF0IjoxNzI3MzE2NzUyLCJqdGkiOiJiZjgyMGU4NGJjM2Q0NDU0OTY1MTU2Zjg5YTQ5MjJiYyIsImVtYWlsIjoibWFsaUBlbWFpbC5jb20ifQ.W7tdgf1kRCYu5lL4Mf-2wZeZe1OM9dq3laRKtUyovA8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/login/refresh/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"login",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMTYzNjc4MCwiaWF0IjoxNzI3MzE2NzgwLCJqdGkiOiI1NTRmMWQ3ZjQ4MzU0ZTRkODRkOGNmMjg2ZDU4MDk3YSIsImVtYWlsIjoibWFsaUBlbWFpbC5jb20ifQ.qzJ0EDiIGkOeAogYh9V4eY381zhStr6fesmrdaGfqPA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/logout/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"auth",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "List Users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/users/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Profiles by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/users/?search=surya",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "surya"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Profiles by email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/users/?search=jsurya@email.com",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "jsurya@email.com"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Friends",
+			"item": [
+				{
+					"name": "Get Pending Requests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/request/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"request",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Requests Sorting",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/request/?ordering=-created_at",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"request",
+								""
+							],
+							"query": [
+								{
+									"key": "ordering",
+									"value": "-created_at"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/request/5/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"request",
+								"5",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Request",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/accept/3/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"accept",
+								"3",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Request",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/reject/4/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"reject",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List My Friends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Block User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/block/4/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"block",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/friend/unblock/4/",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"friend",
+								"unblock",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3Mzc1OTk5LCJpYXQiOjE3MjczNjUxOTksImp0aSI6IjU1Njc0NjU1NjRmZTRiNTNiMzExZDBkZDc3MGMyYzY3IiwiZW1haWwiOiJyc3VyeWFAZW1haWwuY29tIn0.e_WwMnlJZIYZrGkEGxeVeswmvPTqZs4cScr_nu4gxdw",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "api_url",
+			"value": "http://localhost:8000/api/v1\n",
+			"type": "string"
+		}
+	]
+}
