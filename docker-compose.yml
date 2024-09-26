@@ -9,6 +9,9 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
 
+  redis:
+    image: redis:6
+
   web:
     build: .
     command: sh /app/start.sh
@@ -16,6 +19,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
 
 volumes:
   postgres_data:

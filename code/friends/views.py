@@ -14,7 +14,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.core.cache import cache
 from friends.throttles import FriendRequestThrottle
 
 
@@ -135,6 +135,10 @@ class Accept(APIView):
         friend_request.save()
         serializer = FriendRequestSerializer(friend_request)
 
+        # cache invalidation
+        cache_key = f"friends_{request.user.id}"
+        cache.delete(cache_key)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -171,9 +175,18 @@ class Reject(APIView):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def list_my_friends(request: Request):
-    my_friends = get_my_friends(request.user)
+    user = request.user
+    cache_key = f"friends_{user.id}"
+    cached_data = cache.get(cache_key)
+
+    if cached_data:
+        return Response(cached_data)
+
+    my_friends = get_my_friends(user)
     serializer = FriendDetailSerializer(my_friends, many=True)
-    return Response(serializer.data)
+    response_data = serializer.data
+    cache.set(cache_key, response_data, timeout=300)  # 5 minutes
+    return Response(response_data)
 
 
 @api_view(["POST"])

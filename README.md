@@ -302,11 +302,11 @@ A Postman collection is exported and available as `Social API.postman_collection
 ## Design Choices
 * Throttling is used to limit number of friend requests a user can send in a minute. It's configured as **3 requests per minute**.
 * Pagination is used for viewing pending friend requests and searching users to reduce the load and improve faster response times. This helps search requests which results in huge number of results.
+* Redis cache is used to cache response of getting friends list API endpoint. This is to ensure performance by returning cached results. The cache is invalidated when a new friend is added to account.
 
 
 ## Next Steps
 * Add swagger documentation for APIs.
-* Setup redis for caching to improve performance.
 * Add unit tests.
 * Ensure error response formats are consistent.
 

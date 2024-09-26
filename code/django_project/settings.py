@@ -143,6 +143,16 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 APPEND_SLASH = True
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
 # 3rd Party Configurations
 
 REST_FRAMEWORK = {
