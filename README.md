@@ -3,8 +3,9 @@ API for a social networking application using Django Rest Framework.
 
 ## Table of Contents
 - [Installation](#installation)
-- [API Documentation](#api-documentation)
 - [Features](#features)
+- [Examples](#examples)
+- [API Documentation](#api-documentation)
 - [Design Choices](#design-choices)
 - [Next Steps](#next-steps)
 - [References](#references)
@@ -29,6 +30,21 @@ docker-compose up --build
     - No need to manually maintain the `requirements.txt` file
     - Built-in dependency resolver
     - Automatically creates and manages virtual environment
+
+## Features
+* JWT based Authentication with refreshable tokens.
+* Sign up with email.
+* Login and Logout.
+* Search users by name or email.
+* Send friend requests to users.
+* Accept/Reject friend requests.
+* Block/Unblock an user.
+* Rejected requests can be resent after a cool down period of 24 hours.
+* List all the friends of logged in user.
+* List all the pending friend requests sent to the user logged in (with sorting).
+* Only authorized resources can be modified by logged in users.
+* Pending requests and User search endpoints are paginated with 10 items per page.
+* User rate throttling is used to limit the rate of friend requests sent in a minute.
 
 ## Examples
 A Postman collection is exported and available as `Social API.postman_collection.json` in the repo. Download and import it to try out examples.
@@ -298,21 +314,6 @@ A Postman collection is exported and available as `Social API.postman_collection
       "message": "User unblocked successfully."
     }
     ```
-
-## Features
-* JWT based Authentication with refreshable tokens.
-* Sign up with email.
-* Login and Logout.
-* Search users by name or email.
-* Send friend requests to users.
-* Accept/Reject friend requests.
-* Block/Unblock an user.
-* Rejected requests can be resent after a cool down period of 24 hours.
-* List all the friends of logged in user.
-* List all the pending friend requests sent to the user logged in (with sorting).
-* Only authorized resources can be modified by logged in users.
-* Pending requests and User search endpoints are paginated with 10 items per page.
-* User rate throttling is used to limit the rate of friend requests sent in a minute.
 
 ## Design Choices
 * Redis cache is used to cache response of getting friends list API endpoint. This is to ensure performance by returning cached results. The cache is invalidated when a new friend is added to account.
