@@ -151,21 +151,22 @@ class Accept(APIView):
     permission_classes = (IsAuthorizedToAcceptOrReject,)
 
     def put(self, request: Request, pk: int):
-        try:
-            friend_request = FriendRequest.objects.get(pk=pk)
-        except FriendRequest.DoesNotExist:
-            return Response(
-                {
-                    "error": f"Friend request with id {pk} not found to accept",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        with transaction.atomic():
+            try:
+                friend_request = FriendRequest.objects.select_for_update().get(pk=pk)
+            except FriendRequest.DoesNotExist:
+                return Response(
+                    {
+                        "error": f"Friend request with id {pk} not found to accept",
+                    },
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-        self.check_object_permissions(request, friend_request)
+            self.check_object_permissions(request, friend_request)
 
-        friend_request.status = "accepted"
-        friend_request.save()
-        serializer = FriendRequestSerializer(friend_request)
+            friend_request.status = "accepted"
+            friend_request.save()
+            serializer = FriendRequestSerializer(friend_request)
 
         # cache invalidation
         cache_key = f"friends_{request.user.id}"

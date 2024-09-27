@@ -45,6 +45,7 @@ docker-compose up --build
 * Only authorized resources can be modified by logged in users.
 * Pending requests and User search endpoints are paginated with 10 items per page.
 * User rate throttling is used to limit the rate of friend requests sent in a minute.
+* Atomic transactions for Send/Accept Friend Request.
 
 ## Examples
 A Postman collection is exported and available as `Social API.postman_collection.json` in the repo. Download and import it to try out examples.
