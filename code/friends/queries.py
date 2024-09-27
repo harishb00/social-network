@@ -24,3 +24,10 @@ def get_my_friends(user):
             friends.add(request.sender)
 
     return friends
+
+
+def are_friends(user1, user2):
+    return FriendRequest.objects.filter(
+        Q(sender=user1, receiver=user2, status="accepted")
+        | Q(sender=user2, receiver=user1, status="accepted")
+    ).exists()

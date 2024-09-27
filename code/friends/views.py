@@ -15,12 +15,13 @@ from rest_framework.generics import ListAPIView
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import cache
+from django.db import transaction
 from friends.throttles import FriendRequestThrottle
 
 
 from .permissions import IsAuthorizedToAcceptOrReject, IsAuthorizedToUnblock
 
-from .queries import get_pending_requests, get_my_friends
+from .queries import get_pending_requests, get_my_friends, are_friends
 from .serializers import (
     FriendRequestSerializer,
     FriendDetailSerializer,
@@ -46,7 +47,6 @@ class Request(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request: Request, pk: int):
-        # Throttle requests
         self.throttle_classes = [FriendRequestThrottle]
 
         try:
@@ -60,45 +60,77 @@ class Request(APIView):
             )
 
         sender = request.user
-
-        # check if there's already a request sent by same user to the same profile
-        # TODO: check if receiver already sent a friend request to the sender
-        fr = FriendRequest.objects.filter(sender=sender, receiver=receiver)
-        if not fr:
-            serializer = FriendRequestSerializer(
-                data={
-                    "sender": sender.pk,
-                    "receiver": receiver.pk,
-                }
+        if sender == receiver:
+            return Response(
+                {"error": "You can't send friend request to yourself"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            if fr[0].status == "rejected":
-                current_time = datetime.now().replace(tzinfo=timezone.utc)
-                rejected_time = fr[0].updated_at
-                hours_difference = (current_time - rejected_time).total_seconds() / 3600
-                if hours_difference > settings.COOL_DOWN_PERIOD:
-                    fr[0].status = "pending"
-                    serializer = FriendRequestSerializer(fr)
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                else:
-                    wait_time = round(settings.COOL_DOWN_PERIOD - hours_difference)
+        if are_friends(sender, receiver):
+            return Response(
+                {"error": "You're already friends"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        with transaction.atomic():
+            frs = FriendRequest.objects.select_for_update().filter(
+                sender=sender, receiver=receiver
+            )
+            if not frs:
+                # CASE 1: Request is already sent by receiver
+                frs = FriendRequest.objects.filter(sender=receiver, receiver=sender)
+                if frs:
                     return Response(
                         {
-                            "error": f"Rejected requests can be resent only after cool down period of {settings.COOL_DOWN_PERIOD} hours. Wait for {wait_time} more hours"
+                            "error": f"You already have a friend request from {receiver.name}"
                         },
-                        status=status.HTTP_403_FORBIDDEN,
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
-            else:
-                return Response(
-                    {"error": "Request is already sent."},
-                    status=status.HTTP_403_FORBIDDEN,
+
+                serializer = FriendRequestSerializer(
+                    data={
+                        "sender": sender.pk,
+                        "receiver": receiver.pk,
+                    }
                 )
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                fr = frs[0]
+                # CASE 1: Rejected
+                if fr.status == "rejected":
+                    if self.is_allowed_to_resend_request(fr):
+                        fr.status = "pending"
+                        serializer = FriendRequestSerializer(fr)
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    else:
+                        wait_time = self.get_wait_time_for_rejected_requests(fr)
+                        return Response(
+                            {
+                                "error": f"Rejected requests can be resent only after cool down period of {settings.COOL_DOWN_PERIOD} hours. Wait for {wait_time} more hours"
+                            },
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+                # CASE 2: Pending
+                elif fr.status == "pending":
+                    return Response(
+                        {"error": "Request is already sent."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+    def is_allowed_to_resend_request(self, friend_request):
+        current_time = datetime.now().replace(tzinfo=timezone.utc)
+        rejected_time = friend_request.updated_at
+        hours_difference = (current_time - rejected_time).total_seconds() / 3600
+        return hours_difference > settings.COOL_DOWN_PERIOD
+
+    def get_wait_time_for_rejected_requests(self, friend_request):
+        current_time = datetime.now().replace(tzinfo=timezone.utc)
+        rejected_time = friend_request.updated_at
+        hours_difference = (current_time - rejected_time).total_seconds() / 3600
+        return round(settings.COOL_DOWN_PERIOD - hours_difference)
 
 
 class RequestListView(ListAPIView):
